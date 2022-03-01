@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
+        <title>Taxa</title>        
+    </head>
+    <body>
+        <h1>Taxa</h1>
+        <div>Guess an animal</div>
+        <input id="text" type="text" name="entry">
+        <button id="submit-button">Submit</button>
+        <div></div>
+        <script>
+            function withId(id) {
+                return document.getElementById(id);
+            }
+
+            function el(tag, text) {
+                const element = document.createElement(tag);
+                if (text) {
+                    const textEl = document.createTextNode(text);
+                    element.appendChild(textEl);
+                }
+                return element;
+            }
+
+
+            let animals4 = null;
+            let numGuesses = 0;
+            
+            function load() {
+                loadFromStorage = true;
+                fetch('/animals5.json')
+                    .then(response => response.json())
+                    .then(data => {animals4 = data;});
+            }
+
+            function getAnimal(name) {
+                for (const [id, animal] of Object.entries(animals4)) {
+                    const commonNames = animal['common names'];
+                    if (commonNames.includes(name)) {
+                        return animal;
+                    }
+                }
+            }
+
+            const text = withId("text");
+            const buttonEl = withId("submit-button");
+            buttonEl.addEventListener("click", () => {
+                if (animals4) {
+                    const guess = text.value;
+                    const animal = getAnimal(guess);
+                    const div = el("div", JSON.stringify(animal));
+                    document.body.appendChild(div);
+                    numGuesses++;
+                
+                } else {
+                    const div = el("div", "Loading...");
+                    document.body.appendChild(div);
+                }
+            });
+
+            load();
+        </script>
+    </body>
+</html>
