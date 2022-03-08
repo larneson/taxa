@@ -57,7 +57,7 @@
             function getCommonTaxa(animal1, animal2) {
                 if (animal1['name'] == animal2['name']){
                     return "You win";
-                } else if (animal1['genus'] == animal2['genus']) {
+                } else if (animal1['genus'] && animal1['genus'] == animal2['genus']) {
                     return "Genus: " + animal1['genus'];
                 } else if (animal1['family'] == animal2['family']) {
                     return "Family: " + animal1['family'];
@@ -71,8 +71,14 @@
                     return "Kingdom: Animalia";
                 }
             }
+            function getRandomAnimal() {
+                answer = answers[Math.floor(Math.random() * answers.length)]
+                return getAnimal(answer)
+                
+            }
             function newGame(){
-                let answer = getAnimal("horse");
+                let answer = getRandomAnimal()
+                console.log(answer)
 
                 buttonEl.addEventListener("click", () => {
                     if (animals) {
@@ -94,12 +100,6 @@
                     }
                 });
 
-                /*while (numGuesses < 10) {
-                    
-                    
-
-                    
-                }*/
             }
             load();
         </script>
