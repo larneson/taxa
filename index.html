@@ -27,41 +27,80 @@
             }
 
 
-            let animals4 = null;
+            let animals = null;
+            let answers = null;
             let numGuesses = 0;
+            const text = withId("text");
+            const buttonEl = withId("submit-button");
             
             function load() {
                 loadFromStorage = true;
-                fetch('/animals5.json')
+                fetch('animals5.json')
                     .then(response => response.json())
-                    .then(data => {animals4 = data;});
+                    .then(data => {animals = data;})
+                    .then(() => newGame());
+                fetch('answers.json')
+                    .then(response => response.json())
+                    .then(data => {answers = data;}); 
+
+    
             }
 
             function getAnimal(name) {
-                for (const [id, animal] of Object.entries(animals4)) {
+                for (const [id, animal] of Object.entries(animals)) {
                     const commonNames = animal['common names'];
                     if (commonNames.includes(name)) {
                         return animal;
                     }
                 }
             }
-
-            const text = withId("text");
-            const buttonEl = withId("submit-button");
-            buttonEl.addEventListener("click", () => {
-                if (animals4) {
-                    const guess = text.value;
-                    const animal = getAnimal(guess);
-                    const div = el("div", JSON.stringify(animal));
-                    document.body.appendChild(div);
-                    numGuesses++;
-                
+            function getCommonTaxa(animal1, animal2) {
+                if (animal1['name'] == animal2['name']){
+                    return "You win";
+                } else if (animal1['genus'] == animal2['genus']) {
+                    return "Genus: " + animal1['genus'];
+                } else if (animal1['family'] == animal2['family']) {
+                    return "Family: " + animal1['family'];
+                } else if (animal1['order'] == animal2["order"]) {
+                    return "Order: " + animal1['order'];
+                } else if (animal1['clade'] == animal2['clade']) {
+                    return 'Clade: ' + animal1['clade'];
+                } else if (animal1['phylum'] == animal2['phylum']) {
+                    return "Phylum: " + animal1['phylum'];
                 } else {
-                    const div = el("div", "Loading...");
-                    document.body.appendChild(div);
+                    return "Kingdom: Animalia";
                 }
-            });
+            }
+            function newGame(){
+                let answer = getAnimal("horse");
 
+                buttonEl.addEventListener("click", () => {
+                    if (animals) {
+                        const guess = text.value;
+                        const animal = getAnimal(guess);
+                        let output = "";
+                        if (animal){
+                            output = getCommonTaxa(animal, answer);
+                        } else {
+                            output = "Animal not in database"
+                        }
+                        const div = el("div", output);
+                        document.body.appendChild(div);
+                        numGuesses++;
+                    
+                    } else {
+                        const div = el("div", "Loading...");
+                        document.body.appendChild(div);
+                    }
+                });
+
+                /*while (numGuesses < 10) {
+                    
+                    
+
+                    
+                }*/
+            }
             load();
         </script>
     </body>
